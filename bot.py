@@ -1,7 +1,21 @@
 import logging
 import os
 
+
 from dotenv import load_dotenv
+from telegram import Update, ForceReply
+from telegram.ext import (
+    Updater,
+    CommandHandler,
+    MessageHandler,
+    Filters,
+    CallbackContext,
+)
+
+
+def start(update: Update, context: CallbackContext) -> None:
+    user = update.effective_user
+    update.message.reply_text(f"Здравствуйте, {user.first_name}!")
 
 
 def main():
@@ -10,6 +24,14 @@ def main():
 
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
+
+    updater = Updater(TG_TOKEN)
+
+    dispatcher = updater.dispatcher
+    dispatcher.add_handler(CommandHandler("start", start))
+
+    updater.start_polling()
+    updater.idle()
 
 
 if __name__ == "__main__":
