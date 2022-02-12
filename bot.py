@@ -18,6 +18,10 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(f"Здравствуйте, {user.first_name}!")
 
 
+def echo(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text(update.message.text)
+
+
 def main():
     load_dotenv()
     TG_TOKEN = os.getenv("TELEGRAM_TOKEN")
@@ -29,6 +33,7 @@ def main():
 
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(MessageHandler(Filters.text, echo))
 
     updater.start_polling()
     updater.idle()
