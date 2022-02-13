@@ -1,9 +1,9 @@
-import json
 import os
-from pprint import pprint
 
 import requests
+from dotenv import load_dotenv
 from google.cloud import dialogflow
+from tqdm import tqdm
 
 
 def get_flow_reply(session_id: int, user_text: str, language_code: str = "ru") -> str:
@@ -22,14 +22,48 @@ def get_flow_reply(session_id: int, user_text: str, language_code: str = "ru") -
     return response.query_result.fulfillment_text
 
 
-def get_prepared_intents(url: str):
+def get_prepared_intents(url: str) -> dict:
     response = requests.get(url)
     response.raise_for_status()
 
-    return json.loads(response.text)
+    return response.json()
+
+
+def create_intent(project_id: str, title: str, intent_content: dict):
+
+    intents_client = dialogflow.IntentsClient()
+    parent = dialogflow.AgentsClient.agent_path(project_id)
+
+    training_phrases = []
+    for question in intent_content["questions"]:
+        part = dialogflow.Intent.TrainingPhrase.Part(text=question)
+        training_phrase = dialogflow.Intent.TrainingPhrase(parts=[part])
+        training_phrases.append(training_phrase)
+
+    text = dialogflow.Intent.Message.Text(text=[intent_content["answer"]])
+    message = dialogflow.Intent.Message(text=text)
+
+    intent = dialogflow.Intent(
+        display_name=title,
+        training_phrases=training_phrases,
+        messages=[message],
+    )
+
+    response = intents_client.create_intent(
+        request={"parent": parent, "intent": intent}
+    )
+
+    return response
 
 
 if __name__ == "__main__":
-    url = "https://dvmn.org/media/filer_public/a7/db/a7db66c0-1259-4dac-9726-2d1fa9c44f20/questions.json"
-    intents = get_prepared_intents(url)
-    pprint(intents)
+    load_dotenv()
+    project_id = os.getenv("GOOGLE_PROJECT_ID")
+
+    intents_url = "https://dvmn.org/media/filer_public/a7/db/a7db66c0-1259-4dac-9726-2d1fa9c44f20/questions.json"
+    intents = get_prepared_intents(intents_url)
+
+    for title, content in tqdm(
+        iterable=intents.items(), desc="Uploading Intents", unit="Intent"
+    ):
+        create_intent(project_id, title, content)
