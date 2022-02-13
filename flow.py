@@ -1,19 +1,10 @@
-import json
 import os
 
 from google.cloud import dialogflow
 
 
-def get_google_creds(filepath: str) -> dict:
-    with open(filepath, "r") as file:
-        credentials = json.load(file)
-
-    return credentials
-
-
 def get_flow_reply(session_id: int, user_text: str, language_code: str = "ru") -> str:
-    google_creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-    project_id = get_google_creds(google_creds)["project_id"]
+    project_id = os.getenv("GOOGLE_PROJECT_ID")
 
     session_client = dialogflow.SessionsClient()
     session = session_client.session_path(project=project_id, session=session_id)

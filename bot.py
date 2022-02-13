@@ -1,6 +1,5 @@
 import logging
 import os
-import json
 
 from dotenv import load_dotenv
 from telegram import Update, ForceReply
