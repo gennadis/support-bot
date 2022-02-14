@@ -15,13 +15,7 @@ def reply_with_flow_vk(event: Event, vk_api: VkApiMethod) -> None:
 
     flow_reply = get_flow_reply(session_id=user_id, user_text=user_text)
 
-    if flow_reply.action == "input.unknown":
-        vk_api.messages.send(
-            user_id=event.user_id,
-            message="Переключаю на оператора. Ожидайте ответа.",
-            random_id=get_random_id(),
-        )
-    else:
+    if not flow_reply.intent.is_fallback:
         vk_api.messages.send(
             user_id=event.user_id,
             message=flow_reply.fulfillment_text,
