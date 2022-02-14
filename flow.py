@@ -1,10 +1,34 @@
+import argparse
+import json
 import os
 
-import requests
 from dotenv import load_dotenv
+from google.api_core.exceptions import GoogleAPIError
 from google.cloud import dialogflow
 from google.cloud.dialogflow_v2.types.session import QueryResult
 from tqdm import tqdm
+
+DVMN_INTENTS_JSON_FILEPATH = "dvmn_questions.json"
+
+
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Upload intents to DialogFlow from JSON file"
+    )
+    parser.add_argument(
+        "--add",
+        help="Intents JSON filepath",
+        default=DVMN_INTENTS_JSON_FILEPATH,
+    )
+
+    return parser.parse_args()
+
+
+def get_intents_from_json(filepath: str) -> dict:
+    with open(filepath, "r") as file:
+        intents = json.load(file)
+
+    return intents
 
 
 def get_flow_reply(
@@ -27,14 +51,11 @@ def get_flow_reply(
     return response.query_result
 
 
-def get_prepared_intents(url: str) -> dict:
-    response = requests.get(url)
-    response.raise_for_status()
-
-    return response.json()
-
-
-def create_intent(project_id: str, title: str, intent_content: dict):
+def create_intent(
+    project_id: str,
+    title: str,
+    intent_content: dict,
+) -> dialogflow.Intent:
 
     intents_client = dialogflow.IntentsClient()
     parent = dialogflow.AgentsClient.agent_path(project_id)
@@ -65,10 +86,15 @@ if __name__ == "__main__":
     load_dotenv()
     project_id = os.getenv("GOOGLE_PROJECT_ID")
 
-    intents_url = "https://dvmn.org/media/filer_public/a7/db/a7db66c0-1259-4dac-9726-2d1fa9c44f20/questions.json"
-    intents = get_prepared_intents(intents_url)
+    args = parse_arguments()
+    intents_filepath = args.add
+    intents = get_intents_from_json(intents_filepath)
 
     for title, content in tqdm(
         iterable=intents.items(), desc="Uploading Intents", unit="Intent"
     ):
-        create_intent(project_id, title, content)
+        try:
+            create_intent(project_id, title, content)
+        except GoogleAPIError as e:
+            print(e)
+            continue
