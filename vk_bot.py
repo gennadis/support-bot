@@ -47,8 +47,8 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("Logger")
-    logger = TelegramLogsHandler(
-        tg_token=telegram_token, chat_id=telegram_admin_chat_id
+    logger.addHandler(
+        TelegramLogsHandler(tg_token=telegram_token, chat_id=telegram_admin_chat_id)
     )
     logger.info("📗 VK bot started successfully")
 
