@@ -8,6 +8,7 @@ With [Google DialogFlow](https://cloud.google.com/dialogflow/docs/) you can hand
 ## Features
 - `long polling` VK and Telegram API utilization
 - Answer user's questions with pre-trained `DialogFlow` model
+- Train your `DialogFlow` from local JSON file
 - Heroku ready!
 
 ## Installation
@@ -34,4 +35,12 @@ pip install -r requirements.txt
 ```bash
 python tg_bot.py
 python vk_bot.py
+```
+
+## Examples
+To create and upload your intents automatically:
+1. Create a JSON file according to the `dvmn_questions.json` example
+2. Run 
+```bash
+python flow.py --add your_intents_filename.json
 ```
