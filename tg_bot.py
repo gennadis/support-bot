@@ -27,14 +27,11 @@ def reply_with_flow(update: Update, content: CallbackContext) -> None:
     update.message.reply_text(flow_reply.fulfillment_text)
 
 
-def main():
-    load_dotenv()
-    TG_TOKEN = os.getenv("TELEGRAM_TOKEN")
-
+def main(token: str):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
-    updater = Updater(TG_TOKEN)
+    updater = Updater(token)
 
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
@@ -45,4 +42,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    load_dotenv()
+    telegram_token = os.getenv("TELEGRAM_TOKEN")
+
+    main(token=telegram_token)
