@@ -3,10 +3,15 @@ import os
 import requests
 from dotenv import load_dotenv
 from google.cloud import dialogflow
+from google.cloud.dialogflow_v2.types.session import QueryResult
 from tqdm import tqdm
 
 
-def get_flow_reply(session_id: int, user_text: str, language_code: str = "ru") -> str:
+def get_flow_reply(
+    session_id: int,
+    user_text: str,
+    language_code: str = "ru",
+) -> QueryResult:
     project_id = os.getenv("GOOGLE_PROJECT_ID")
 
     session_client = dialogflow.SessionsClient()
@@ -19,7 +24,7 @@ def get_flow_reply(session_id: int, user_text: str, language_code: str = "ru") -
         request={"session": session, "query_input": query_input}
     )
 
-    return response.query_result.fulfillment_text
+    return response.query_result
 
 
 def get_prepared_intents(url: str) -> dict:
