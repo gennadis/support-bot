@@ -13,13 +13,20 @@ def reply_with_flow_vk(event: Event, vk_api: VkApiMethod) -> None:
     user_id = event.user_id
     user_text = event.text
 
-    reply = get_flow_reply(session_id=user_id, user_text=user_text)
+    flow_reply = get_flow_reply(session_id=user_id, user_text=user_text)
 
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=reply,
-        random_id=get_random_id(),
-    )
+    if flow_reply.action == "input.unknown":
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message="Переключаю на оператора. Ожидайте ответа.",
+            random_id=get_random_id(),
+        )
+    else:
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message=flow_reply.fulfillment_text,
+            random_id=get_random_id(),
+        )
 
 
 def main(token: str):
@@ -37,3 +44,4 @@ if __name__ == "__main__":
     vk_token = os.getenv("VK_API_KEY")
 
     main(token=vk_token)
+п
