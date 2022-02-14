@@ -3,7 +3,7 @@
 This project automates answering popular questions in your Vk group or in Telegram.
 With [Google DialogFlow](https://cloud.google.com/dialogflow/docs/) you can handle these questions with ease - just train your own neural network model with question-answer templates.
 
-![Screenshot](Screenshot.png)
+![Telegram Bot Preview](tg_bot_preview.gif)
 
 ## Features
 - `long polling` VK and Telegram API utilization
