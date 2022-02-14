@@ -1,15 +1,23 @@
 import os
 
 import vk_api
-from vk_api.longpoll import VkLongPoll, VkEventType
+from vk_api.longpoll import VkLongPoll, VkEventType, Event
 from vk_api.utils import get_random_id
+from vk_api.vk_api import VkApiMethod
 from dotenv import load_dotenv
 
+from flow import get_flow_reply
 
-def echo(event, vk_api):
+
+def reply_with_flow_vk(event: Event, vk_api: VkApiMethod) -> None:
+    user_id = event.user_id
+    user_text = event.text
+
+    reply = get_flow_reply(session_id=user_id, user_text=user_text)
+
     vk_api.messages.send(
         user_id=event.user_id,
-        message=event.text,
+        message=reply,
         random_id=get_random_id(),
     )
 
@@ -21,12 +29,7 @@ def main(token: str):
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-
-            vk.messages.send(
-                user_id=event.user_id,
-                random_id=get_random_id(),
-                message=event.text,
-            )
+            reply_with_flow_vk(event, vk)
 
 
 if __name__ == "__main__":
