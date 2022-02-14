@@ -35,7 +35,6 @@ def main(token: str):
 
 if __name__ == "__main__":
     load_dotenv()
-    vk_token = os.getenv("VK_API_KEY")
+    vk_token = os.getenv("VK_TOKEN")
 
     main(token=vk_token)
-п
