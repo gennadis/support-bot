@@ -23,8 +23,8 @@ def reply_with_flow(update: Update, content: CallbackContext) -> None:
     user_id = update.effective_user.id
     user_text = update.message.text
 
-    reply = get_flow_reply(session_id=user_id, user_text=user_text)
-    update.message.reply_text(reply)
+    flow_reply = get_flow_reply(session_id=user_id, user_text=user_text)
+    update.message.reply_text(flow_reply.fulfillment_text)
 
 
 def main():
