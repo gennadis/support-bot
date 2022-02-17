@@ -43,6 +43,18 @@ def reply_with_flow(update: Update, content: CallbackContext) -> None:
     update.message.reply_text(flow_reply.fulfillment_text)
 
 
+def main(token: str):
+    updater = Updater(token)
+
+    dispatcher = updater.dispatcher
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(MessageHandler(Filters.text, reply_with_flow))
+
+    updater.start_polling()
+    updater.idle()
+    logger.info("📗 Telegram API long polling started successfully")
+
+
 if __name__ == "__main__":
     load_dotenv()
     telegram_token = os.getenv("TELEGRAM_TOKEN")
@@ -55,12 +67,4 @@ if __name__ == "__main__":
     )
     logger.info("📗 Telegram bot started successfully")
 
-    updater = Updater(telegram_token)
-
-    dispatcher = updater.dispatcher
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(Filters.text, reply_with_flow))
-
-    updater.start_polling()
-    updater.idle()
-    logger.info("📗 Telegram API long polling started successfully")
+    main(token=telegram_token)

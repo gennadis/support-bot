@@ -28,6 +28,17 @@ def reply_with_flow_vk(event: Event, vk_api: VkApiMethod) -> None:
         )
 
 
+def main(token: str):
+    vk_session = vk_api.VkApi(token=token)
+    vk = vk_session.get_api()
+    longpoll = VkLongPoll(vk_session)
+    logger.info("📗 VK API long polling started successfully")
+
+    for event in longpoll.listen():
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+            reply_with_flow_vk(event, vk)
+
+
 if __name__ == "__main__":
     load_dotenv()
     vk_token = os.getenv("VK_TOKEN")
@@ -41,11 +52,4 @@ if __name__ == "__main__":
     )
     logger.info("📗 VK bot started successfully")
 
-    vk_session = vk_api.VkApi(token=vk_token)
-    vk = vk_session.get_api()
-    longpoll = VkLongPoll(vk_session)
-    logger.info("📗 VK API long polling started successfully")
-
-    for event in longpoll.listen():
-        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-            reply_with_flow_vk(event, vk)
+    main(token=vk_token)
