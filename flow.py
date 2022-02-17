@@ -8,6 +8,8 @@ from google.cloud import dialogflow
 from google.cloud.dialogflow_v2.types.session import QueryResult
 from tqdm import tqdm
 
+load_dotenv()
+GOOGLE_PROJECT_ID = os.getenv("GOOGLE_PROJECT_ID")
 DVMN_INTENTS_JSON_FILEPATH = "dvmn_questions.json"
 
 
@@ -29,10 +31,9 @@ def get_flow_reply(
     user_text: str,
     language_code: str = "ru",
 ) -> QueryResult:
-    project_id = os.getenv("GOOGLE_PROJECT_ID")
 
     session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project=project_id, session=session_id)
+    session = session_client.session_path(project=GOOGLE_PROJECT_ID, session=session_id)
 
     text_input = dialogflow.TextInput(text=user_text, language_code=language_code)
     query_input = dialogflow.QueryInput(text=text_input)
