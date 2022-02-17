@@ -10,18 +10,13 @@ from tqdm import tqdm
 
 load_dotenv()
 GOOGLE_PROJECT_ID = os.getenv("GOOGLE_PROJECT_ID")
-DVMN_INTENTS_JSON_FILEPATH = "dvmn_questions.json"
 
 
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Upload intents to DialogFlow from JSON file"
     )
-    parser.add_argument(
-        "--add",
-        help="Intents JSON filepath",
-        default=DVMN_INTENTS_JSON_FILEPATH,
-    )
+    parser.add_argument("--add", help="Intents JSON filename", required=True)
 
     return parser.parse_args()
 
