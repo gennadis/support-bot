@@ -24,13 +24,6 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def get_intents_from_json(filepath: str) -> dict:
-    with open(filepath, "r") as file:
-        intents = json.load(file)
-
-    return intents
-
-
 def get_flow_reply(
     session_id: int,
     user_text: str,
@@ -87,8 +80,10 @@ if __name__ == "__main__":
     project_id = os.getenv("GOOGLE_PROJECT_ID")
 
     args = parse_arguments()
+
     intents_filepath = args.add
-    intents = get_intents_from_json(intents_filepath)
+    with open(intents_filepath, "r") as file:
+        intents = json.load(file)
 
     for title, content in tqdm(
         iterable=intents.items(), desc="Uploading Intents", unit="Intent"
