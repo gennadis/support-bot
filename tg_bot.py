@@ -12,7 +12,7 @@ from telegram.ext import (
     CallbackContext,
 )
 
-from flow import get_flow_reply
+from google_dialogflow_api import get_flow_reply
 
 
 class TelegramLogsHandler(logging.Handler):

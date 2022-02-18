@@ -7,7 +7,7 @@ from vk_api.utils import get_random_id
 from vk_api.vk_api import VkApiMethod
 from dotenv import load_dotenv
 
-from flow import get_flow_reply
+from google_dialogflow_api import get_flow_reply
 from tg_bot import TelegramLogsHandler
 
 
