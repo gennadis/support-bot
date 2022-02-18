@@ -9,20 +9,13 @@ from google.api_core.exceptions import GoogleAPIError
 from google_dialogflow_api import create_intent
 
 
-def parse_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Upload intents to DialogFlow from JSON file"
-    )
-    parser.add_argument("-p", "--path", help="Intents JSON file path", required=True)
-
-    return parser.parse_args()
-
-
 def main():
     load_dotenv()
     project_id = os.getenv("GOOGLE_PROJECT_ID")
 
-    args = parse_arguments()
+    parser = argparse.ArgumentParser(description="Upload intents from JSON file")
+    parser.add_argument("-p", "--path", help="Intents JSON file path", required=True)
+    args = parser.parse_args()
 
     intents_filepath = args.path
     with open(intents_filepath, "r") as file:
