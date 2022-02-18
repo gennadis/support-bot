@@ -14,6 +14,8 @@ from telegram.ext import (
 from google_dialogflow_api import get_flow_reply
 from logs_handler import TelegramLogsHandler
 
+logger = logging.getLogger(__file__)
+
 
 def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
@@ -32,23 +34,26 @@ def reply_with_flow(update: Update, content: CallbackContext) -> None:
     update.message.reply_text(flow_reply.fulfillment_text)
 
 
+def error_handler(update: Update, context: CallbackContext):
+    logger.error(msg="Telegram bot encountered an error", exc_info=context.error)
+
+
 def main():
     load_dotenv()
     telegram_token = os.getenv("TELEGRAM_TOKEN")
     telegram_admin_chat_id = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
 
     logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger("Logger")
     logger.addHandler(
         TelegramLogsHandler(tg_token=telegram_token, chat_id=telegram_admin_chat_id)
     )
-    logger.info("📗 Telegram bot started successfully")
 
     updater = Updater(telegram_token)
 
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text, reply_with_flow))
+    dispatcher.add_error_handler(error_handler)
 
     updater.start_polling()
     updater.idle()
