@@ -17,10 +17,7 @@ def reply_with_flow_vk(event: Event, vk_api: VkApiMethod) -> None:
     user_id = event.user_id
     user_text = event.text
 
-    try:
-        flow_reply = get_flow_reply(session_id=user_id, user_text=user_text)
-    except Exception:
-        logger.exception()
+    flow_reply = get_flow_reply(session_id=user_id, user_text=user_text)
 
     if not flow_reply.intent.is_fallback:
         vk_api.messages.send(
@@ -48,7 +45,10 @@ def main():
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-            reply_with_flow_vk(event, vk)
+            try:
+                reply_with_flow_vk(event, vk)
+            except Exception:
+                logger.exception()
 
 
 if __name__ == "__main__":
