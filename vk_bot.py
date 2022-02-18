@@ -8,7 +8,7 @@ from vk_api.vk_api import VkApiMethod
 from dotenv import load_dotenv
 
 from google_dialogflow_api import get_flow_reply
-from tg_bot import TelegramLogsHandler
+from logs_handler import TelegramLogsHandler
 
 
 def reply_with_flow_vk(event: Event, vk_api: VkApiMethod) -> None:

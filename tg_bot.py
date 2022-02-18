@@ -2,8 +2,7 @@ import logging
 import os
 
 from dotenv import load_dotenv
-import telegram
-from telegram import Update, ForceReply
+from telegram import Update
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -13,17 +12,7 @@ from telegram.ext import (
 )
 
 from google_dialogflow_api import get_flow_reply
-
-
-class TelegramLogsHandler(logging.Handler):
-    def __init__(self, tg_token: str, chat_id: int):
-        super().__init__()
-        self.chat_id = chat_id
-        self.tg_bot = telegram.Bot(token=tg_token)
-
-    def emit(self, record):
-        log_entry = self.format(record)
-        self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
+from logs_handler import TelegramLogsHandler
 
 
 def start(update: Update, context: CallbackContext) -> None:
