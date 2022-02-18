@@ -42,5 +42,5 @@ To create and upload your intents automatically:
 1. Create a JSON file according to the `dvmn_questions.json` example
 2. Run 
 ```bash
-python flow.py --add your_intents_filename.json
+python upload_intents.py --path your_intents_filename.json
 ```

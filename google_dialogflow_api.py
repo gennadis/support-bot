@@ -1,24 +1,13 @@
-import argparse
-import json
 import os
 
 from dotenv import load_dotenv
-from google.api_core.exceptions import GoogleAPIError
+
 from google.cloud import dialogflow
 from google.cloud.dialogflow_v2.types.session import QueryResult
-from tqdm import tqdm
+
 
 load_dotenv()
 GOOGLE_PROJECT_ID = os.getenv("GOOGLE_PROJECT_ID")
-
-
-def parse_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Upload intents to DialogFlow from JSON file"
-    )
-    parser.add_argument("--add", help="Intents JSON filename", required=True)
-
-    return parser.parse_args()
 
 
 def get_flow_reply(
@@ -69,23 +58,3 @@ def create_intent(
     )
 
     return response
-
-
-if __name__ == "__main__":
-    load_dotenv()
-    project_id = os.getenv("GOOGLE_PROJECT_ID")
-
-    args = parse_arguments()
-
-    intents_filepath = args.add
-    with open(intents_filepath, "r") as file:
-        intents = json.load(file)
-
-    for title, content in tqdm(
-        iterable=intents.items(), desc="Uploading Intents", unit="Intent"
-    ):
-        try:
-            create_intent(project_id, title, content)
-        except GoogleAPIError as e:
-            print(e)
-            continue
