@@ -22,10 +22,14 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(f"Здравствуйте, {user.first_name}!")
 
 
-def reply_with_flow_tg(update: Update, content: CallbackContext) -> None:
+def reply_with_flow_tg(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
     user_text = update.message.text
-    flow_reply = get_flow_reply(session_id=user_id, user_text=user_text)
+    flow_reply = get_flow_reply(
+        google_project_id=context.bot_data["project_id"],
+        session_id=user_id,
+        user_text=user_text,
+    )
 
     update.message.reply_text(flow_reply.fulfillment_text)
 
@@ -38,15 +42,17 @@ def main():
     load_dotenv()
     telegram_token = os.getenv("TELEGRAM_TOKEN")
     telegram_admin_chat_id = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
+    google_project_id = os.getenv("GOOGLE_PROJECT_ID")
 
     logging.basicConfig(level=logging.INFO)
     logger.addHandler(
         TelegramLogsHandler(tg_token=telegram_token, chat_id=telegram_admin_chat_id)
     )
 
-    updater = Updater(telegram_token)
-
+    updater = Updater(telegram_token, use_context=True)
     dispatcher = updater.dispatcher
+    dispatcher.bot_data["project_id"] = google_project_id
+
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text, reply_with_flow_tg))
     dispatcher.add_error_handler(error_handler)
